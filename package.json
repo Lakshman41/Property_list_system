@@ -7,8 +7,9 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon",
-    "build": "tsc", 
-    "start": "node dist/server.js" 
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "import-csv": "node --loader ts-node/esm ./src/utils/csvImporter.ts"
   },
   "author": "Google LLC",
   "license": "Apache-2.0",
