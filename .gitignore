@@ -50,3 +50,9 @@ Thumbs.db
 
 # TypeScript
 *.tsbuildinfo
+
+#dataset
+dataset.csv
+
+#vscode files
+.vscode

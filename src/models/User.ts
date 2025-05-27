@@ -3,12 +3,22 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
+// Define the structure of a single recommendation
+export interface IRecommendation {
+  property: mongoose.Types.ObjectId; // Reference to the Property model
+  recommendedBy: mongoose.Types.ObjectId; // Reference to the User model (who recommended it)
+  message?: string; // Optional message from the recommender
+  recommendedAt: Date;
+}
+
 // Interface for User document
-export interface IUser extends Document {
+export interface IUser extends mongoose.Document {
+  _id: mongoose.Types.ObjectId;
   name: string;
   email: string;
   password?: string; // Optional because it will be selected explicitly or not returned
   favorites: mongoose.Types.ObjectId[];
+  recommendationsReceived: IRecommendation[];
   createdAt: Date;
   updatedAt: Date;
   // Instance methods
@@ -57,13 +67,29 @@ const UserSchema: Schema<IUser> = new Schema(
         ref: 'Property' 
       }
     ],
-    // recommendationsReceived: [
-    //   {
-    //     property: { type: mongoose.Schema.Types.ObjectId, ref: 'Property' },
-    //     recommendedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    //     recommendedAt: { type: Date, default: Date.now },
-    //   },
-    // ],
+    recommendationsReceived: [ // <--- ADD THIS SCHEMA DEFINITION
+      {
+        property: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'Property', // References the 'Property' model
+          required: true,
+        },
+        recommendedBy: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: 'User', // References the 'User' model
+          required: true,
+        },
+        message: {
+          type: String,
+          trim: true,
+          maxlength: [500, 'Recommendation message cannot be more than 500 characters'],
+        },
+        recommendedAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   {
     timestamps: true, // Adds createdAt and updatedAt

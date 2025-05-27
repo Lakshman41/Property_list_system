@@ -4,15 +4,17 @@ import {
   addFavoriteProperty,
   removeFavoriteProperty,
   getFavoriteProperties,
-} from '../controllers/userController.js'; // Note .js
-import { protect } from '../middlewares/authMiddleware.js'; // Your auth middleware
+  recommendProperty, // <-- ADD
+  getReceivedRecommendations, // <-- ADD
+} from '../controllers/userController.js';
+import { protect } from '../middlewares/authMiddleware.js';
 
 const router = express.Router();
 console.log('[[USERROUTES.TS]] User routes file is being loaded/executed.');
 
-// All routes below are protected
 router.use(protect); // Apply protect middleware to all routes in this file
 
+// --- Favorites Routes ---
 router.route('/me/favorites')
   .get(getFavoriteProperties);
 
@@ -20,8 +22,11 @@ router.route('/me/favorites/:propertyId')
   .post(addFavoriteProperty)
   .delete(removeFavoriteProperty);
 
-// Later, for recommendations:
-// router.post('/me/recommendations/:propertyId/to/:recipientEmail', recommendPropertyToUser);
-// router.get('/me/recommendations/received', getReceivedRecommendations);
+// --- Recommendation Routes ---
+// Expects { recipientEmail: string, message?: string } in the request body
+router.post('/me/recommend/:propertyId', recommendProperty);
+
+router.get('/me/recommendations', getReceivedRecommendations);
+
 
 export default router;
